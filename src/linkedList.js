@@ -1,5 +1,5 @@
 function createNode(key, value, prev, next) {
-  return {key, value, prev, next };
+  return { key, value, prev, next };
 }
 
 function linkedList() {
@@ -49,13 +49,14 @@ function linkedList() {
     }
   };
 
-  const at = (index, currentNode = headNode) => {
-    let result;
-    for (let i = 1; i <= index; i++) {
-      result = currentNode;
+  const at = (key, currentNode = headNode) => {
+    while (currentNode.key !== key) {
+      if (currentNode.next === null) {
+        return null;
+      }
       currentNode = currentNode.next;
     }
-    return result;
+    return currentNode;
   };
 
   const pop = () => {
@@ -94,22 +95,38 @@ function linkedList() {
       return currentNode.value + " -> " + toString(currentNode.next);
     }
   };
-  const insertAt = (key, value, index) => {
-    let nextNode = at(index);
+  const insertAt = (key, value) => {
+    let nextNode = at(key);
     let prevNode = nextNode.prev;
     let newNode = createNode(key, value, prevNode, nextNode);
     prevNode.next = newNode;
     nextNode.prev = newNode;
     length++;
   };
-  const removeAt = (index) => {
-    let currentNode = at(index);
-    let nextNode = currentNode.next;
+  const removeAt = (key) => {
+    let currentNode = at(key);
+    if (!currentNode) {
+      throw new Error("key doesn't exist");
+    }
+
     let prevNode = currentNode.prev;
-    prevNode.next = nextNode;
-    nextNode.prev = prevNode;
+    let nextNode = currentNode.next;
+
+    if (prevNode) {
+      prevNode.next = nextNode;
+    } else {
+      headNode = nextNode;
+    }
+    if (nextNode) {
+      nextNode.prev = prevNode;
+    }
+    if (currentNode === headNode && currentNode === nextNode) {
+      headNode = null;
+    }
+
     currentNode.next = null;
     currentNode.prev = null;
+
     length--;
   };
 
